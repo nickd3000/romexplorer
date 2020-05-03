@@ -53,9 +53,9 @@ public class Application {
     	sp.setVisible(true);
     	
     	int fontSize = 14;
-    	int bytesPerRow = 16;
+    	int bytesPerRow = 8;
     	JTable table = new JTable(new DataTableModel(df,bytesPerRow));
-    	table.setFont(new Font(Font.MONOSPACED, Font.BOLD, fontSize));
+    	table.setFont(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
     	table.getColumnModel().getColumn(0).setPreferredWidth(fontSize*10);
     	table.getColumnModel().getColumn(1).setPreferredWidth(fontSize*bytesPerRow*3);
     	table.getColumnModel().getColumn(2).setPreferredWidth(fontSize*bytesPerRow*2);
