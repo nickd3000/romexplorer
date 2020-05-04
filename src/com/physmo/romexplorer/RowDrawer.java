@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
 public interface RowDrawer {
 
 	int getBytesPerRow();
-	int getRowHeight();
-	int getRowWidth();
+	int getOutputRowHeight();
+	int getOutputRowWidth();
 	
 	BufferedImage drawRow(int [] data, int offset); 
 }

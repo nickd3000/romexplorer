@@ -25,12 +25,12 @@ public class TextPanel extends JPanel
 		int numRows = df.size() / textRowDrawer.getBytesPerRow();
 				
 		Dimension preferredSize = new Dimension(
-				textRowDrawer.getRowWidth(),
-				textRowDrawer.getRowHeight()*numRows);
+				textRowDrawer.getOutputRowWidth(),
+				textRowDrawer.getOutputRowHeight()*numRows);
 		
 		this.setPreferredSize(preferredSize);
 		
-		System.out.println("Preferred height: "+textRowDrawer.getRowHeight()*numRows);
+		System.out.println("Preferred height: "+textRowDrawer.getOutputRowHeight()*numRows);
 	}
 
 	public void paintComponent(Graphics g) {
@@ -44,7 +44,7 @@ public class TextPanel extends JPanel
         
         for (int i=dirtyRowStart;i<dirtyRowEnd;i++) {
         	BufferedImage bi = rowDrawer.drawRow(df.getData(), i*rowDrawer.getBytesPerRow());
-        	g.drawImage(bi,0,i*rowDrawer.getRowHeight(),null);
+        	g.drawImage(bi,0,i*rowDrawer.getOutputRowHeight(),null);
         }
         
    }
@@ -53,7 +53,7 @@ public class TextPanel extends JPanel
 		if (r==null) System.out.println("Feck"); 
 		if (rowDrawer==null) System.out.println("Feck rowDrawer"); 
 		
-		int rowHeight = rowDrawer.getRowHeight();
+		int rowHeight = rowDrawer.getOutputRowHeight();
 		dirtyRowStart = (r.y / rowHeight);
 		dirtyRowEnd = ((r.y+r.height) / rowHeight)+1;
 	}

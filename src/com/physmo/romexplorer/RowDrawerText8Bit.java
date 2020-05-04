@@ -1,8 +1,6 @@
 package com.physmo.romexplorer;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class RowDrawerText8Bit implements RowDrawer {
@@ -10,18 +8,18 @@ public class RowDrawerText8Bit implements RowDrawer {
 	BufferedImage bufferedImage = null;
 	int charSize = 16;
 	
-	int numInputValues = 16;
-	int numOutputValues = 16;
+	int numInputValues = 16*2;
+	int numOutputValues = 16*2;
 	
-	Color colBg = new Color(0,0,0);
-	Color colFg = new Color(0xff,0xff,0xff);
+	Color colBg = new Color(31, 31, 31);
+	Color colFg = new Color(167, 167, 167);
 	Font  font  = new Font(Font.MONOSPACED, Font.BOLD,  charSize-2);
 
-	Color colBgChar = new Color(0x00,0x60,0x00);
-	Color colBgNumber = new Color(0x00,0x00,0x60);
+	Color colBgChar = new Color(0, 52, 0);
+	Color colBgNumber = new Color(3, 3, 82);
 	
 	public RowDrawerText8Bit() {
-		bufferedImage = new BufferedImage(getRowWidth(), getRowHeight(), 
+		bufferedImage = new BufferedImage(getOutputRowWidth(), getOutputRowHeight(),
 			     BufferedImage.TYPE_INT_RGB);
 	}
 	
@@ -31,12 +29,12 @@ public class RowDrawerText8Bit implements RowDrawer {
 	}
 
 	@Override
-	public int getRowHeight() {
+	public int getOutputRowHeight() {
 		return charSize;
 	}
 
 	@Override
-	public int getRowWidth() {
+	public int getOutputRowWidth() {
 		
 		return charSize*numOutputValues;
 	}
@@ -44,6 +42,8 @@ public class RowDrawerText8Bit implements RowDrawer {
 	@Override
 	public BufferedImage drawRow(int[] data, int offset) {
 		Graphics g = bufferedImage.getGraphics();
+		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g.setFont(font);
 		g.setColor(colBg);
 		g.clearRect(0,0,bufferedImage.getWidth(),bufferedImage.getHeight());
@@ -65,7 +65,8 @@ public class RowDrawerText8Bit implements RowDrawer {
 		char c = (char)(i&0xff);
 		return c;
 	}
-	
+
+	// Set colour based on character type, eg text, number, non printing
 	public void setBGFromChar(Graphics g, int val) {
 		Color col = colBg;
 		if (val>=65 && val<=90) col = colBgChar;
