@@ -16,8 +16,15 @@ public class BasicDataFile implements DataFile {
 		
 		ClassLoader classLoader = getClass().getClassLoader();
 		//File file = new File(classLoader.getResource("Tetris.gb").getFile());
-		//File file = new File(classLoader.getResource("FinalFantasyIII.sfc").getFile());
+		//File file = new File(classLoader.getResource("Castlevania.gb").getFile());
+		//File file = new File(classLoader.getResource("drmario.gb").getFile());
+		//File file = new File(classLoader.getResource("megaman.gb").getFile());
+		//File file = new File(classLoader.getResource("picross.gb").getFile());
+		//File file = new File(classLoader.getResource("pokemonsilver.gbc").getFile());
+		//File file = new File(classLoader.getResource("rtypeii.gb").getFile());
+		//File file = new File(classLoader.getResource("xenon2.gb").getFile());
 		//File file = new File(classLoader.getResource("SuperMarioLand.gb").getFile());
+		//File file = new File(classLoader.getResource("FinalFantasyIII.sfc").getFile());
 		//File file = new File(classLoader.getResource("Cadaver_1990_A.adf").getFile());
 		//File file = new File(classLoader.getResource("Cadaver_1990_B.adf").getFile());
 		//File file = new File(classLoader.getResource("Fish.adf").getFile());
@@ -28,7 +35,13 @@ public class BasicDataFile implements DataFile {
 		//File file = new File(classLoader.getResource("huntersm.prg").getFile());
 		//File file = new File(classLoader.getResource("cpalace.dat").getFile());
 		//File file = new File(classLoader.getResource("prince.exe").getFile());
-		
+		//File file = new File(classLoader.getResource("LEV1BLOX.BIN").getFile());
+		//File file = new File(classLoader.getResource("FIRE.EXE").getFile());
+		//File file = new File(classLoader.getResource("frankie.d64").getFile());
+		//File file = new File(classLoader.getResource("entombed.d64").getFile());
+		//File file = new File(classLoader.getResource("sonic.sms").getFile());
+		//File file = new File(classLoader.getResource("shinobi.sms").getFile());
+
         try {
             in = new FileInputStream(file); //"/Tetris.gb");
             
@@ -42,6 +55,12 @@ public class BasicDataFile implements DataFile {
                 in.close();
             }
         }
+
+        int histogram[] = BlockHistogram.histogram(data);
+		System.out.println("Histogram: ");
+		for (int i=0;i<8;i++) {
+			System.out.println(histogram[i]);
+		}
 	}
 	
 	@Override

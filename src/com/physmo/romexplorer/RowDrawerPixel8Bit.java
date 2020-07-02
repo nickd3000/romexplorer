@@ -1,5 +1,7 @@
 package com.physmo.romexplorer;
 
+import com.physmo.romexplorer.tilers.*;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -12,7 +14,7 @@ public class RowDrawerPixel8Bit implements RowDrawer {
 	int numOutputValues =64;
 	Color colBg = new Color(36, 36, 36);
 	
-	int pixelsPerByte = 2;
+	int pixelsPerByte = 1;
 	Color [] palette = null;
 	int[] copy = null;
 
@@ -54,54 +56,61 @@ public class RowDrawerPixel8Bit implements RowDrawer {
 		}
 	}
 
-	public void refactorData(int[] data, int blockWidth, int blockHeight, int pixelsPerByte) {
+	public void refactorData(int[] data, Tiler tiler) {
 		copy = new int[data.length];
+		int[] tileData;
+		int[] tilerMetrics = tiler.getMetrics();
 
-int outputStride=numInputValues;
+		int blockWidth=tilerMetrics[Tiler.WIDTH];
+		int blockHeight=tilerMetrics[Tiler.WIDTH];
+		int tilerSize = tilerMetrics[Tiler.SIZE];
+
+		int outputStride = numInputValues;
 		int blocksPerRow = outputStride/blockWidth;
+
+		//int offset = BlockHistogram.getMaxOffset(BlockHistogram.histogram(data));
+
 		int scanningHead = 0;
-		int outputHead = 0;
-		int innerx=0;
-		int innery=0;
-		int blocksInRow=0;
+		boolean keepGoing = true;
+		int gx=0, gy=0; // grid x,y
+		while (keepGoing) {
+			// Grab tile
+			//tileData = TileTranslators.monoChar(data, scanningHead);
+			tileData = tiler.getTile(data, scanningHead);
+			scanningHead+=tilerSize;
 
-		//maketestData(data,blockWidth,blockHeight);
+			if (scanningHead>=data.length) keepGoing=false;
 
-		for (;;) {
-			if (outputHead>=copy.length || scanningHead>=data.length) break;
-
-			copy[outputHead]=data[scanningHead];
-			outputHead++;
-			scanningHead++;
-			innerx++;
-
-			if (innerx==blockWidth) {
-				innerx=0;
-				innery++;
-				outputHead+=outputStride-blockWidth;
-				if (innery==blockHeight) {
-					innery=0;
-					outputHead-=(outputStride*blockHeight);
-					outputHead+=blockWidth;
-					blocksInRow++;
-				}
-				if (blocksInRow>=blocksPerRow) {
-					blocksInRow=0;
-					outputHead+=(outputStride*blockHeight);
-					outputHead-=outputStride;
-				}
+			drawTile(copy, tileData, outputStride, gx*blockWidth, gy*blockHeight, blockWidth, blockHeight);
+			gx++;
+			if (gx>=outputStride/8) {
+				gx=0;
+				gy++;
 			}
 		}
 
 
+	}
 
+	public void drawTile(int[] dest, int[] tileData, int destStride, int destx, int desty, int tileWidth, int tileHeight) {
+		int i=0;
+		int c=0;
+		int xx,yy;
+		for (int y=0;y<tileHeight;y++) {
+			for (int x=0;x<tileWidth;x++) {
+				c = tileData[i++];
+				xx=destx+x;
+				yy=desty+y;
+				dest[xx+(yy*destStride)]=c;
+			}
+		}
 	}
 
 	@Override
 	public BufferedImage drawRow(int[] data, int offset) {
 		// hack
 		if (copy==null) {
-			refactorData(data, 4,8,2);
+			refactorData(data, new TilerSnes4BPP());
 		}
 
 		Graphics g = bufferedImage.getGraphics();
