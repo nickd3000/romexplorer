@@ -1,6 +1,7 @@
 package com.physmo.romexplorer;
  
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import com.physmo.romexplorer.*;
@@ -11,6 +12,9 @@ import com.physmo.romexplorer.*;
 import javax.swing.*;        
  
 public class Application {
+
+	static DataFile dataFile=null;
+
     /**
      * Create the GUI and show it.  For thread safety,
      * this method should be invoked from the
@@ -18,9 +22,12 @@ public class Application {
      * @throws IOException 
      */
     private static void createAndShowGUI() {
-        //Create and set up the window.
-        JFrame frame = new JFrame("HelloWorldSwing");
 
+    	SummaryStrip summaryStrip = new SummaryStrip();
+
+        //Create and set up the window.
+        JFrame frame = new JFrame("Rom Explorer");
+frame.setSize(1024,768);
         frame.setSize(300, 200);
         Color bgColor = new Color(100, 100, 200);
         frame.setBackground(bgColor);
@@ -31,7 +38,7 @@ public class Application {
         //frame.getContentPane().add(label);
         
         //DataFile df = createDummyDataFile(2000);
-        DataFile dataFile=null;
+
 		try {
 			dataFile = new BasicDataFile();
 		} catch (IOException e) {
@@ -51,7 +58,22 @@ public class Application {
 		JScrollPane scrollPane2 = new JScrollPane(panel2);
 		scrollPane2.setSize(200, 200);
 		scrollPane2.setVisible(true);
-    	
+
+		JPanel summaryStripPanel = new JPanel() {
+			@Override
+			public void paint(Graphics g) {
+				super.paint(g);
+				BufferedImage summaryStripImage = summaryStrip.getSummaryStrip(dataFile.getData());
+
+				        if (summaryStripImage!=null) {
+					g.drawImage(summaryStripImage,
+							0,0,
+							40,this.getVisibleRect().height, null);
+				}
+			}
+		};
+		summaryStripPanel.setMaximumSize(new Dimension(20,summaryStripPanel.getPreferredSize().height));
+
     	int fontSize = 14;
     	int bytesPerRow = 8;
     	JTable table = new JTable(new DataTableModel(dataFile,bytesPerRow));
@@ -61,14 +83,16 @@ public class Application {
     	table.getColumnModel().getColumn(2).setPreferredWidth(fontSize*bytesPerRow*2);
     	//table.setFont(new Font("Serif", Font.BOLD, 20));
 
-		GridLayout gridLayout = new GridLayout(3,1);
+		GridLayout gridLayout = new GridLayout(1,3);
 		frame.getContentPane().setLayout(gridLayout);
 
         frame.getContentPane().add(scrollPane1);
+		frame.getContentPane().add(summaryStripPanel);
 		frame.getContentPane().add(scrollPane2);
+
         
         JScrollPane scrollPane = new JScrollPane(table);
-        frame.getContentPane().add(scrollPane);
+       // frame.getContentPane().add(scrollPane);
  
         //Display the window.
         frame.pack();

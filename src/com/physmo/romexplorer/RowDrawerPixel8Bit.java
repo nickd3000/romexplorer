@@ -101,7 +101,10 @@ public class RowDrawerPixel8Bit implements RowDrawer {
 				c = tileData[i++];
 				xx=destx+x;
 				yy=desty+y;
-				dest[xx+(yy*destStride)]=c;
+				if (xx+(yy*destStride)<dest.length)
+				{
+					dest[xx+(yy*destStride)]=c;
+				}
 			}
 		}
 	}

@@ -6,8 +6,9 @@ import java.awt.image.BufferedImage;
 public class RowDrawerText8Bit implements RowDrawer {
 	
 	BufferedImage bufferedImage = null;
+
 	int charSize = 16;
-	
+	boolean summaryStripRendered = false;
 	int numInputValues = 16*2;
 	int numOutputValues = 16*2;
 	
@@ -52,7 +53,7 @@ public class RowDrawerText8Bit implements RowDrawer {
 		for (int i=0;i<numInputValues;i++) {
 			value = data[offset+i]&0xff;
 			//g.setColor(new Color(value,value,value));
-			setBGFromChar(g,value);
+			g.setColor(getColForChar(value));
 			g.fillRect(i*charSize, 0, (i+1)*charSize, charSize);
 			g.setColor(colFg);
 			g.drawString(""+calculateChar(value), i*charSize+2,charSize-2);
@@ -61,18 +62,19 @@ public class RowDrawerText8Bit implements RowDrawer {
 		return bufferedImage;
 	}
 
+
 	public char calculateChar(int i) {
 		char c = (char)(i&0xff);
 		return c;
 	}
 
 	// Set colour based on character type, eg text, number, non printing
-	public void setBGFromChar(Graphics g, int val) {
-		Color col = colBg;
-		if (val>=65 && val<=90) col = colBgChar;
-		if (val>=97 && val<=122) col = colBgChar;
-		if (val>=48 && val<=57) col = colBgNumber;
-		g.setColor(col);
+	public Color getColForChar(int val) {
+		if (val>=65 && val<=90) return colBgChar;
+		if (val>=97 && val<=122) return colBgChar;
+		if (val>=48 && val<=57) return colBgNumber;
+		return colBg;
 	}
-	
+
+
 }

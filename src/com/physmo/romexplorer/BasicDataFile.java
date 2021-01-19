@@ -27,8 +27,8 @@ public class BasicDataFile implements DataFile {
 		//File file = new File(classLoader.getResource("FinalFantasyIII.sfc").getFile());
 		//File file = new File(classLoader.getResource("Cadaver_1990_A.adf").getFile());
 		//File file = new File(classLoader.getResource("Cadaver_1990_B.adf").getFile());
-		//File file = new File(classLoader.getResource("Fish.adf").getFile());
-		File file = new File(classLoader.getResource("SuperMarioWorld.smc").getFile());
+		File file = new File(classLoader.getResource("Fish.adf").getFile());
+		//File file = new File(classLoader.getResource("SuperMarioWorld.smc").getFile());
 		//File file = new File(classLoader.getResource("pwd").getFile());
 		//File file = new File(classLoader.getResource("finders.prg").getFile());
 		//File file = new File(classLoader.getResource("twinkingdom.d64").getFile());

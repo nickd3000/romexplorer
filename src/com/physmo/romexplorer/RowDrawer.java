@@ -8,5 +8,5 @@ public interface RowDrawer {
 	int getOutputRowHeight();
 	int getOutputRowWidth();
 	
-	BufferedImage drawRow(int [] data, int offset); 
+	BufferedImage drawRow(int [] data, int offset);
 }

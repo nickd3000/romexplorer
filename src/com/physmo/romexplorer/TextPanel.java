@@ -46,7 +46,15 @@ public class TextPanel extends JPanel
         	BufferedImage bi = rowDrawer.drawRow(df.getData(), i*rowDrawer.getBytesPerRow());
         	g.drawImage(bi,0,i*rowDrawer.getOutputRowHeight(),null);
         }
-        
+
+        // Draw summary strip.
+//		BufferedImage summaryStrip = rowDrawer.getSummaryStrip(df.getData());
+//
+//        if (summaryStrip!=null) {
+//        	g.drawImage(summaryStrip,
+//					this.getWidth()-40,0,
+//					40,this.getVisibleRect().height, null);
+//        }
    }
 	
 	public void calculateDirtyRows(Rectangle r) {
