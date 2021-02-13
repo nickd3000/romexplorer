@@ -1,3 +1,23 @@
 Console graphics formats page:
 https://mrclick.zophar.net/TilEd/download/consolegfx.txt
 
+
+Phase 1
+[ ] remove all eclipse artifacts
+[ ] add top button bar and load button
+[ ] Make tiler selectable
+[ ] Add description to tilers
+[ ] click on summary bar to scroll to position
+[ ] remove unused panel
+
+Phase 2
+[ ] add waveform strip
+[ ] configurable colours
+[ ] tiler offsets
+
+Future
+[ ] migrate to bitbucket
+[ ] remove embedded roms and add some freeware ones
+[ ] search
+[ ] word detection
+[ ] text selection
