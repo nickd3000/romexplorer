@@ -16,6 +16,8 @@ public class TilerSega16Col implements Tiler {
 
         // process rows.
         for (int row = 0; row < 8; row++) {
+            if ((index + row * 4)> data.length-5) continue;
+
             int b1 = data[(index + row * 4)];
             int b2 = data[(index + row * 4) + 1];
             int b3 = data[(index + row * 4) + 2];

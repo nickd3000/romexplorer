@@ -16,6 +16,8 @@ public class TilerSnes4BPP implements Tiler {
 
         // process rows.
         for (int row = 0; row < 8; row++) {
+            if ((index + (row + 8) * 2) + 1 > data.length-4) continue;
+
             int b1 = data[(index + row * 2)];
             int b2 = data[(index + row * 2) + 1];
             int b3 = data[(index + (row + 8) * 2)];

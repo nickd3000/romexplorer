@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 
 public class BasicDataFile implements DataFile {
 
@@ -15,7 +16,10 @@ public class BasicDataFile implements DataFile {
 
         ClassLoader classLoader = getClass().getClassLoader();
 
-        File file = new File(classLoader.getResource("/floracy.gbc").getFile());
+        URL resource = classLoader.getResource("floracy.gbc");
+
+
+        File file = new File(classLoader.getResource("ultetris.BIN").getFile());
 
         try {
             load(file.getAbsolutePath());
