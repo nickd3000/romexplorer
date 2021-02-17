@@ -1,6 +1,7 @@
 package com.physmo.romexplorer;
 
 import com.physmo.romexplorer.gui.Gui;
+import com.physmo.romexplorer.tilers.Tiler;
 import com.physmo.romexplorer.tilers.TilerRepo;
 
 public class Application {
@@ -9,6 +10,16 @@ public class Application {
     DataFile dataFile = null;
     TilerRepo tilerRepo = new TilerRepo();
     String tilerName;
+
+    public Tiler getCurrentTiler() {
+        return currentTiler;
+    }
+
+    public void setCurrentTiler(Tiler currentTiler) {
+        this.currentTiler = currentTiler;
+    }
+
+    Tiler currentTiler;
 
     public Application() {
         dataFile = new BasicDataFile();

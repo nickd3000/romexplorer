@@ -1,12 +1,18 @@
 package com.physmo.romexplorer.tilers;
 
-public class TilerGB implements Tiler {
+public class TilerGB extends Tiler {
 
     int[] metrics = {16, 8, 8}; // input size, width, height
 
-    @Override
-    public int[] getMetrics() {
-        return metrics;
+    public TilerGB() {
+        this(8, 8);
+    }
+
+    public TilerGB(int width, int height) {
+        this.tileWidth = width;
+        this.tileHeight = height;
+        this.bytesPerTile = 16;
+        this.tilerName = "TilerGB";
     }
 
     @Override

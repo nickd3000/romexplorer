@@ -16,11 +16,9 @@ public class BasePanel extends JPanel {
 
     private DataFile df = null;
 
-    public BasePanel(DataFile df, RowDrawer textRowDrawer) {
+    public BasePanel(DataFile df, RowDrawer rowDrawer) {
         this.df = df;
-        this.rowDrawer = textRowDrawer;
-
-        int numRows = df.size() / textRowDrawer.getBytesPerRow();
+        this.rowDrawer = rowDrawer;
 
         refreshPanelDimensions();
     }
@@ -30,15 +28,21 @@ public class BasePanel extends JPanel {
     }
 
     public void refreshPanelDimensions() {
-        int numRows = df.size() / this.rowDrawer.getBytesPerRow();
+        int bytesPerRow = this.rowDrawer.getBytesPerRow();
+        if (bytesPerRow==0) bytesPerRow=8;
+        int numRows = df.size() / bytesPerRow;
+
 
         Dimension preferredSize = new Dimension(
                 this.rowDrawer.getOutputRowWidth(),
-                this.rowDrawer.getOutputRowHeight() * numRows);
+                this.rowDrawer.getOutputRowHeight() * numRows ); //this.rowDrawer.getNumRows(df.getData()));
 
-        this.setPreferredSize(preferredSize);
+        //this.setPreferredSize(preferredSize);
+        Dimension documentSize = rowDrawer.getDocumentSize();
 
-        System.out.println("Preferred height: " + this.rowDrawer.getOutputRowHeight() * numRows);
+        this.setPreferredSize(documentSize);
+
+        System.out.println("documentSize: " +documentSize.width+", "+documentSize.height);
     }
 
     public void paintComponent(Graphics g) {
@@ -51,18 +55,11 @@ public class BasePanel extends JPanel {
         calculateDirtyRows(r);
 
         for (int i = dirtyRowStart; i < dirtyRowEnd; i++) {
-            BufferedImage bi = rowDrawer.drawRow(df.getData(), i * rowDrawer.getBytesPerRow());
+            //BufferedImage bi = rowDrawer.renderStrip( i * rowDrawer.getBytesPerStrip());
+            BufferedImage bi = rowDrawer.renderStrip( i ); // should be number of translated pixels per row
             g.drawImage(bi, 0, i * rowDrawer.getOutputRowHeight(), null);
         }
 
-        // Draw summary strip.
-//		BufferedImage summaryStrip = rowDrawer.getSummaryStrip(df.getData());
-//
-//        if (summaryStrip!=null) {
-//        	g.drawImage(summaryStrip,
-//					this.getWidth()-40,0,
-//					40,this.getVisibleRect().height, null);
-//        }
     }
 
     public void calculateDirtyRows(Rectangle r) {

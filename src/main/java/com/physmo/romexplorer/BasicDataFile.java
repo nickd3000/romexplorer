@@ -9,6 +9,8 @@ import java.net.URL;
 public class BasicDataFile implements DataFile {
 
     private int[] data = null;
+    String fileName;
+    long fileSize;
 
     public BasicDataFile() {
         int arraySize = 1024 * 200;
@@ -56,17 +58,27 @@ public class BasicDataFile implements DataFile {
     }
 
     @Override
+    public String getFileName() {
+        return fileName;
+    }
+
+    @Override
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    @Override
     public void load(String path) throws IOException {
         System.out.println("Load path:"+path);
         FileInputStream in = null;
-
-        long fileSize = getFileSize(path);
+this.fileName=path;
+        this.fileSize = readFileSize(path);
         data = new int[(int) fileSize];
 
         int arraySize = (int) fileSize;
 
         try {
-            in = new FileInputStream(path); //"/Tetris.gb");
+            in = new FileInputStream(path);
 
             int c;
             int count = 0;
@@ -89,7 +101,7 @@ public class BasicDataFile implements DataFile {
         return data;
     }
 
-    public long getFileSize(String fileName) {
+    public long readFileSize(String fileName) {
         File f = new File(fileName);
         return f.length();
     }

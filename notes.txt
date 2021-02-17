@@ -3,17 +3,21 @@ https://mrclick.zophar.net/TilEd/download/consolegfx.txt
 
 
 Phase 1
-[ ] remove all eclipse artifacts
-[ ] add top button bar and load button
-[ ] Make tiler selectable
-[ ] Add description to tilers
+[*] remove all eclipse artifacts
+[*] add top button bar and load button
+[*] Make tiler selectable
+[*] Add description to tilers
 [ ] click on summary bar to scroll to position
-[ ] remove unused panel
+[*] remove unused panel
+[ ] info bar
 
 Phase 2
+[ ] colour mappers
+[ ] auto unzip
 [ ] add waveform strip
 [ ] configurable colours
 [ ] tiler offsets
+[ ] automatically select tiler based on file type
 
 Future
 [ ] migrate to bitbucket

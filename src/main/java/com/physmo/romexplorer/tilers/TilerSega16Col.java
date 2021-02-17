@@ -1,13 +1,10 @@
 package com.physmo.romexplorer.tilers;
 
-public class TilerSega16Col implements Tiler {
+public class TilerSega16Col extends Tiler {
 
     int[] metrics = {4 * 8, 8, 8}; // input size, width, height
 
-    @Override
-    public int[] getMetrics() {
-        return metrics;
-    }
+
 
     @Override
     public int[] getTile(int[] data, int index) {

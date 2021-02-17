@@ -1,17 +1,18 @@
 package com.physmo.romexplorer.tilers;
 
-public interface Tiler {
+public abstract class Tiler {
 
-    int SIZE = 0;
-    int WIDTH = 1;
-    int HEIGHT = 2;
+    int tileWidth, tileHeight, bytesPerTile;
+    String tilerName = "No Name";
+    String description = "No Name";
 
-    // input size, width, height
-    int[] getMetrics();
+    public int getTileWidth() { return tileWidth; }
+    public int getTileHeight() { return tileHeight; }
+    public int getBytesPerTile() { return bytesPerTile; }
 
-    int[] getTile(int[] data, int index);
+    public String getName() { return tilerName; }
+    public String getDescription() { return description; }
 
-    String getName();
+    abstract public int[] getTile(int[] data, int index);
 
-    String getDescription();
 }

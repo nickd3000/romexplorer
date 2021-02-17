@@ -1,45 +1,51 @@
 package com.physmo.romexplorer.tilers;
 
-public class Tiler16Col implements Tiler {
+public class Tiler16Col extends Tiler {
 
-    int width, height;
-    int[] metrics = {32, 8, 8}; // input size, width, height
+    boolean flipOrder = false;
 
     public Tiler16Col() {
-        this(8, 8);
+        this(8, 8, false);
     }
 
-    public Tiler16Col(int width, int height) {
-        this.width = width;
-        this.height = height;
-        metrics[0] = (width * height) / 2;
-        metrics[1] = width;
-        metrics[2] = height;
-    }
-
-    @Override
-    public int[] getMetrics() {
-        return metrics;
+    public Tiler16Col(int width, int height, boolean flipOrder) {
+        this.tileWidth = width;
+        this.tileHeight = height;
+        this.bytesPerTile = (width * height) / 2;
+        this.tilerName = "Tiler16Col"+"_"+width+"x"+height+(flipOrder?"_f":"");
+        this.description = "";
+        this.flipOrder=flipOrder;
     }
 
     @Override
     public int[] getTile(int[] data, int index) {
 
-        int[] output = new int[width * height];
+        int[] output = new int[tileWidth * tileHeight];
         int outputPos = 0;
 
 
         // process rows.
-        for (int pixel = 0; pixel < metrics[0]; pixel++) {
+        for (int pixel = 0; pixel < bytesPerTile; pixel++) {
             if ((index + pixel) >= data.length) continue;
             int b1 = data[(index + pixel)];
 
             int out = 0;
-            out = (b1) & 0b0000_1111;
 
-            output[outputPos++] = out;
-            out = (b1 >> 4) & 0b0000_1111;
-            output[outputPos++] = out;
+            if (!flipOrder) {
+                out = (b1) & 0b0000_1111;
+                output[outputPos++] = out;
+
+                out = (b1 >> 4) & 0b0000_1111;
+                output[outputPos++] = out;
+            } else {
+                out = (b1 >> 4) & 0b0000_1111;
+                output[outputPos++] = out;
+
+                out = (b1) & 0b0000_1111;
+                output[outputPos++] = out;
+            }
+
+
 
         }
 
@@ -48,13 +54,4 @@ public class Tiler16Col implements Tiler {
         return output;
     }
 
-    @Override
-    public String getName() {
-        return "Tiler16Col";
-    }
-
-    @Override
-    public String getDescription() {
-        return null;
-    }
 }

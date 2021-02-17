@@ -1,13 +1,10 @@
 package com.physmo.romexplorer.tilers;
 
-public class TilerSnes4BPP implements Tiler {
+public class TilerSnes4BPP extends Tiler {
 
     int[] metrics = {32, 8, 8}; // input size, width, height
 
-    @Override
-    public int[] getMetrics() {
-        return metrics;
-    }
+
 
     @Override
     public int[] getTile(int[] data, int index) {

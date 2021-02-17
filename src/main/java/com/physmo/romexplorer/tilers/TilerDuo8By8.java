@@ -1,16 +1,16 @@
 package com.physmo.romexplorer.tilers;
 
-public class TilerMono8By8 extends Tiler {
+public class TilerDuo8By8 extends Tiler {
 
-    public TilerMono8By8() {
+    public TilerDuo8By8() {
         this(8, 8);
     }
 
-    public TilerMono8By8(int width, int height) {
+    public TilerDuo8By8(int width, int height) {
         this.tileWidth = width;
         this.tileHeight = height;
         this.bytesPerTile = height;
-        this.tilerName = "TilerMono8By8";
+        this.tilerName = "TilerDuo8By8";
     }
 
 
@@ -26,14 +26,18 @@ public class TilerMono8By8 extends Tiler {
             if ((index + row)>=data.length) continue;
             int b1 = data[(index + row)];
 
-            int out = 0;
-            for (int col = 0; col < 8; col++) {
-                out = (TilerUtils.getBit(b1, col));
-                output[outputPos++] = out;
+            int a1,a2 = 0;
+            for (int col = 0; col < 4; col++) {
+                a1 = (TilerUtils.getBit(b1, col*2));
+                a2 = (TilerUtils.getBit(b1, (col*2)+1));
+
+                // Wide pixels
+                output[outputPos++] = a1+(a2*2);
+                output[outputPos++] = a1+(a2*2);
             }
         }
 
-        TilerUtils.scale2to256(output);
+        TilerUtils.scale4to256(output);
 
         return output;
     }

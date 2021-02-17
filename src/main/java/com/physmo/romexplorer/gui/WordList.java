@@ -1005,7 +1005,13 @@ public class WordList {
             "you",
             "young",
             "your",
-            "yourself"};
+            "yourself",
+            "nintendo", "sega", "sony", "atari",
+            "amiga", "start", "select", "lives",
+            "credits", "crack", "genesis", "game",
+            "master","rom","tool","segment","cpu",
+            "gif","jpg","jpeg","audio","data","save",
+    };
 
 
 }

@@ -9,18 +9,20 @@ import java.awt.image.BufferedImage;
 public class RowDrawerPixel8Bit implements RowDrawer {
 
     BufferedImage bufferedImage = null;
-    int pixelSize = 4;
-    int numInputValues = 64;
-    int numOutputValues = 64;
+    int scale = 4;
+    int outputPixelWidth = 64; // Raw unscaled pixels
+    //int numOutputValues = 64;
     Color colBg = new Color(36, 36, 36);
 
-    int pixelsPerByte = 1;
     Color[] palette = null;
-    int[] copy = null;
+    int[] refactoredData = null;
 
-    String tilerName = "";
+
     Application application;
-    int[] subPixelBuffer = new int[8];
+
+    int numRows = 0;
+    int bytesPerRow = 0;
+    int bytesPerStrip = 0;
 
     public RowDrawerPixel8Bit(Application application) {
         this.application = application;
@@ -44,18 +46,73 @@ public class RowDrawerPixel8Bit implements RowDrawer {
 
     @Override
     public int getBytesPerRow() {
-        return numInputValues;
+
+        return bytesPerRow;
+    }
+
+    @Override
+    public int getBytesPerStrip() {
+        return bytesPerStrip;
     }
 
     @Override
     public int getOutputRowHeight() {
-        return pixelSize;
+        // This should be one scaled pixel high?
+        return scale;
     }
 
     @Override
     public int getOutputRowWidth() {
+        // scaled output width in pixels?
+        return scale * outputPixelWidth;
+    }
 
-        return pixelSize * numOutputValues * pixelsPerByte;
+    @Override
+    public int getNumRowsForFile() {
+        //int data[] = application.getDataFile().getData();
+        int dataLength = application.getDataFile().getData().length;
+
+        Tiler tiler = application.getCurrentTiler();
+        int tilesPerRow = outputPixelWidth/tiler.getTileWidth();
+        bytesPerRow = tilesPerRow * tiler.getBytesPerTile();
+        bytesPerStrip = tilesPerRow * tiler.getBytesPerTile() / tiler.getTileHeight();
+
+        System.out.println("dataLength: "+dataLength);
+        System.out.println("tilesPerRow: "+tilesPerRow);
+        System.out.println("bytesPerRow: "+bytesPerRow);
+        System.out.println("bytesPerStrip: "+bytesPerStrip);
+
+        //return dataLength / bytesPerRow;
+
+        return dataLength/bytesPerRow;
+
+    }
+
+    @Override
+    public int getNumRowsForRefactoredFile() {
+        int dataLength = refactoredData.length;
+        Tiler tiler = application.getCurrentTiler();
+
+//        System.out.println("dataLength: "+dataLength);
+//        System.out.println("tilesPerRow: "+tilesPerRow);
+//        System.out.println("bytesPerRow: "+bytesPerRow);
+//        System.out.println("bytesPerStrip: "+bytesPerStrip);
+
+        return dataLength/(tiler.getTileWidth()*tiler.getTileHeight());
+    }
+
+    @Override
+    public Dimension getDocumentSize() {
+
+        Tiler tiler = application.getCurrentTiler();
+
+        if (tiler==null) return new Dimension(100,100);
+
+        numRows = getNumRowsForRefactoredFile();
+        int documentHeight = numRows * tiler.getTileHeight();// * scale;
+        int documentWidth = getOutputRowWidth();
+
+        return new Dimension(documentWidth, documentHeight);
     }
 
     public void maketestData(int[] data, int blockWidth, int blockHeight) {
@@ -64,45 +121,51 @@ public class RowDrawerPixel8Bit implements RowDrawer {
         }
     }
 
+    // Create a representation of the data in tiled format.
     public void refactorData(int[] data, Tiler tiler) {
+
+        System.out.println("refactorData Tiler tileWidth:"+tiler.getTileWidth()+" tileHeight:"+tiler.getTileHeight()+" bytesPerTile"+tiler.getBytesPerTile());
+
         createImageBuffer();
 
-        copy = new int[data.length];
         int[] tileData;
-        int[] tilerMetrics = tiler.getMetrics();
 
-        int blockWidth = tilerMetrics[Tiler.WIDTH];
-        int blockHeight = tilerMetrics[Tiler.WIDTH];
-        int tilerSize = tilerMetrics[Tiler.SIZE];
-
-        int outputStride = numInputValues;
-        int blocksPerRow = outputStride / blockWidth;
-
-        //int offset = BlockHistogram.getMaxOffset(BlockHistogram.histogram(data));
+        int tileWidth = tiler.getTileWidth();
+        int tileHeight = tiler.getTileHeight();
+        int bytesPerTile = tiler.getBytesPerTile();
+        refactoredData = new int[(data.length/bytesPerTile)*tileWidth*tileHeight];
 
         int scanningHead = 0;
         boolean keepGoing = true;
         int gx = 0, gy = 0; // grid x,y
         while (keepGoing) {
-            // Grab tile
-            //tileData = TileTranslators.monoChar(data, scanningHead);
+
+            // TODO: can we check here if we would overflow?
             tileData = tiler.getTile(data, scanningHead);
-            scanningHead += tilerSize;
+            scanningHead += bytesPerTile;
 
             if (scanningHead >= data.length) keepGoing = false;
 
-            drawTile(copy, tileData, outputStride, gx * blockWidth, gy * blockHeight, blockWidth, blockHeight);
+            //System.out.println("drawTile "+gx+", "+gy);
+
+            drawRefactoredTile(refactoredData, tileData, outputPixelWidth,
+                    gx * tileWidth, gy * tileHeight,
+                    tileWidth, tileHeight);
             gx++;
-            if (gx >= outputStride / 8) {
+            if (gx >= outputPixelWidth / tileWidth) {
                 gx = 0;
                 gy++;
             }
         }
 
+        numRows = gy;
 
+        // Calculate bytes per row - Should be number of bytes required to make up each row of tiles.
+        int numberOfTilesPerRow = outputPixelWidth / tileWidth;
+        bytesPerRow = numberOfTilesPerRow*bytesPerTile;
     }
 
-    public void drawTile(int[] dest, int[] tileData, int destStride, int destx, int desty, int tileWidth, int tileHeight) {
+    public void drawRefactoredTile(int[] dest, int[] tileData, int destStride, int destx, int desty, int tileWidth, int tileHeight) {
         int i = 0;
         int c = 0;
         int xx, yy;
@@ -118,33 +181,16 @@ public class RowDrawerPixel8Bit implements RowDrawer {
         }
     }
 
-    // q: will this trigger a refactor - can we call it after a load?
-    public void clearCopy() {
-        copy = null;
-    }
-
-    // refactors if the tiler changed
-    public void handleRefactoring(int[] data) {
-        // hack
-        if (copy == null || !tilerName.equals(application.getTilerName())) {
-            //refactorData(data, new TilerSnes4BPP());
-            Tiler tiler = application.getTilerRepo().getByName(application.getTilerName());
-            if (tiler == null) return;
-
-            refactorData(data, tiler); //new Tiler256Col());
-            //refactorData(data, new TilerGB());
-
-            tilerName = application.getTilerName();
-        }
-    }
-
     @Override
-    public BufferedImage drawRow(int[] data, int offset) {
+    public BufferedImage renderStrip(int row) {
+        // this drows one row of scaled pixels to the buffer
 
-        //handleRefactoring(data);
-        if (copy == null) {
+        if (refactoredData == null) {
             return null;
         }
+
+        int scaledRow = row * outputPixelWidth;
+
         Graphics g = bufferedImage.getGraphics();
 
         g.setColor(colBg);
@@ -152,63 +198,17 @@ public class RowDrawerPixel8Bit implements RowDrawer {
 
         int value = 0;
         int count = 0;
-        int component = 50;
-        for (int i = 0; i < numInputValues; i++) {
-            //value = data[blockAdjuster(offset, i, 4, 8)]&0xff;
-            int index = blockAdjuster(offset, i, 4, 8);
-            if (index >= copy.length) continue;
+        for (int i = 0; i < outputPixelWidth; i++) {
+            int index = scaledRow+i;
+            if (index >= refactoredData.length) continue;
 
-            value = copy[index] & 0xff;
-            //value = data[i+offset]&0xff;
-            calculateSubPixels(value);
-            for (int j = 0; j < pixelsPerByte; j++) {
-                component = subPixelBuffer[j];
-                g.setColor(palette[component & 0xff]);
-                g.fillRect(count * pixelSize, 0, (count + 1) * pixelSize, pixelSize);
-                count++;
-            }
-
-
+            value = refactoredData[index] & 0xff;
+            g.setColor(palette[value & 0xff]);
+            g.fillRect(count * scale, 0, scale, scale);
+            count++;
         }
 
         return bufferedImage;
-    }
-
-    public int blockAdjuster(int startIndex, int index, int blockWidth, int blockHeight) {
-        return startIndex + index;
-
-//		int rowVolume = (numInputValues / pixelsPerByte) * blockHeight;
-//		int row = startIndex / rowVolume;
-
-//		int delta = index-startIndex;
-//		int blockSize = 8;
-//
-//		int blockNum = delta/blockSize;
-//		int blockMod = delta%blockSize;
-//		return index+(blockNum*(blockSize*blockSize));
-    }
-
-    public void calculateSubPixels(int val) {
-        if (pixelsPerByte == 1) {
-            subPixelBuffer[0] = val;
-        }
-        if (pixelsPerByte == 2) {
-            subPixelBuffer[0] = (val & 0b11110000) >> 4;
-            subPixelBuffer[1] = val & 0b00001111;
-            subPixelBuffer[0] = subPixelBuffer[0] * 16;
-            subPixelBuffer[1] = subPixelBuffer[1] * 16;
-        }
-        if (pixelsPerByte == 4) {
-            subPixelBuffer[1] = (val & 0b11000000) >> 6;
-            subPixelBuffer[2] = (val & 0b00110000) >> 4;
-            subPixelBuffer[3] = (val & 0b00001100) >> 2;
-            subPixelBuffer[4] = (val & 0b00000011);
-            subPixelBuffer[0] = subPixelBuffer[0] * 64;
-            subPixelBuffer[1] = subPixelBuffer[1] * 64;
-            subPixelBuffer[2] = subPixelBuffer[2] * 64;
-            subPixelBuffer[3] = subPixelBuffer[3] * 64;
-        }
-
     }
 
 }

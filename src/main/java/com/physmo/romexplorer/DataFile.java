@@ -16,4 +16,7 @@ public interface DataFile {
     int size();
 
     void setSize(int size);
+
+    String getFileName();
+    long getFileSize();
 }

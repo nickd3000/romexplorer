@@ -23,6 +23,7 @@ public class Gui {
     private static JScrollPane pixelPanelScrollPane;
     private static JPanel summaryStripPanel;
     private static JComboBox tilerCombo;
+    private static InfoBar infoBar;
     SummaryStrip summaryStrip = new SummaryStrip();
     Application application;
 
@@ -40,11 +41,11 @@ public class Gui {
     }
 
     public void refactorImageData() {
-        String tilerName = (String) (tilerCombo.getSelectedItem());
-        Tiler byName = application.getTilerRepo().getByName(tilerName);
-        if (byName == null) System.out.println("tiler is null");
-        if (byName != null) {
-            ((RowDrawerPixel8Bit) (pixelPanel.getRowDrawer())).refactorData(application.getDataFile().getData(), byName);
+//        String tilerName = (String) (tilerCombo.getSelectedItem());
+//        Tiler byName = application.getTilerRepo().getByName(tilerName);
+        if (application.getCurrentTiler() == null) System.out.println("tiler is null");
+        if (application.getCurrentTiler() != null) {
+            ((RowDrawerPixel8Bit) (pixelPanel.getRowDrawer())).refactorData(application.getDataFile().getData(), application.getCurrentTiler());
         }
     }
 
@@ -94,13 +95,18 @@ public class Gui {
             if (e.getActionCommand().equals("comboBoxChanged")) {
                 String selected = (String) (((JComboBox) e.getSource()).getSelectedItem());
                 System.out.println("changed tiler to " + selected);
+
+                String tilerName = (String) (tilerCombo.getSelectedItem());
+                Tiler newTiler = application.getTilerRepo().getByName(tilerName);
+                application.setCurrentTiler(newTiler);
+
                 refactorImageData();
                 refreshAll();
             }
             //String petName = (String)e.getSelectedItem();
         });
 
-        basePanel = new BasePanel(application.getDataFile(), new RowDrawerText8Bit());
+        basePanel = new BasePanel(application.getDataFile(), new RowDrawerText8Bit(application));
         textPanelScrollPane = new JScrollPane(basePanel);
         textPanelScrollPane.setSize(200, 200);
         textPanelScrollPane.setVisible(true);
@@ -127,13 +133,15 @@ public class Gui {
 
         summaryStripPanel.setPreferredSize(new Dimension(40, summaryStripPanel.getPreferredSize().height));
 
+        infoBar = new InfoBar(application);
+
         contentPanel.add(textPanelScrollPane);
         contentPanel.add(summaryStripPanel);
         contentPanel.add(pixelPanelScrollPane);
 
         mainFrame.add(commandPanel, BorderLayout.NORTH);
         mainFrame.add(contentPanel, BorderLayout.CENTER);
-
+        mainFrame.add(infoBar, BorderLayout.SOUTH);
 
         //Display the window.
         mainFrame.pack();
