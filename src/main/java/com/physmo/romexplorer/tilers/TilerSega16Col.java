@@ -4,7 +4,16 @@ public class TilerSega16Col extends Tiler {
 
     int[] metrics = {4 * 8, 8, 8}; // input size, width, height
 
+    public TilerSega16Col() {
+        this(8, 8);
+    }
 
+    public TilerSega16Col(int width, int height) {
+        this.tileWidth = width;
+        this.tileHeight = height;
+        this.bytesPerTile = (width*height)/2;
+        this.tilerName = "TilerSega16Col";
+    }
 
     @Override
     public int[] getTile(int[] data, int index) {

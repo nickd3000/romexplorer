@@ -4,7 +4,16 @@ public class TilerSnes4BPP extends Tiler {
 
     int[] metrics = {32, 8, 8}; // input size, width, height
 
+    public TilerSnes4BPP() {
+        this(8, 8);
+    }
 
+    public TilerSnes4BPP(int width, int height) {
+        this.tileWidth = width;
+        this.tileHeight = height;
+        this.bytesPerTile = (width*height)/2;;
+        this.tilerName = "TilerSnes4BPP";
+    }
 
     @Override
     public int[] getTile(int[] data, int index) {

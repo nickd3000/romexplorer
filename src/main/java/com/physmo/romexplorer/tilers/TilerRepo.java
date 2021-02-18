@@ -17,6 +17,7 @@ public class TilerRepo {
         tilers.add(new Tiler256Col(32,32));
         tilers.add(new Tiler256Col(64,64));
         tilers.add(new TilerGB());
+        tilers.add(new TilerNES());
         tilers.add(new TilerMono8By8());
         tilers.add(new TilerDuo8By8());
         tilers.add(new TilerSega4Col());
