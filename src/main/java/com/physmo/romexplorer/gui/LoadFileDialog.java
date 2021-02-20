@@ -22,4 +22,6 @@ public class LoadFileDialog {
         return fileName;
 
     }
+
+    // gba: 16 col 8x8
 }

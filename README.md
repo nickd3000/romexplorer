@@ -4,3 +4,5 @@ Simple java swing based app to view text and image data in files, with support f
 
 Useful for exploring game rom files to find text and images.
 Useful for data mining
+
+![Image Screenshot 1](docs/screenshot01.png)
