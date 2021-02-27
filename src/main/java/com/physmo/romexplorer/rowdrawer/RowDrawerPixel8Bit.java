@@ -29,7 +29,11 @@ public class RowDrawerPixel8Bit implements RowDrawer {
 
         createImageBuffer();
 
-        initPalette();
+        //initPalette();
+        //this.setPalette(GenerateColorMap.testGenerate());
+
+        // TODO: Force this to pick a specific palette for now.
+        this.setPalette(application.getColorMapRepo().getList().get(3).map);
     }
 
     public void createImageBuffer() {
@@ -42,6 +46,10 @@ public class RowDrawerPixel8Bit implements RowDrawer {
         for (int i = 0; i <= 0xff; i++) {
             palette[i] = new Color(i, i, i);
         }
+    }
+
+    public void setPalette(Color [] newPalette) {
+        this.palette = newPalette;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.physmo.romexplorer;
 
+import com.physmo.colormapper.ColorMapRepo;
 import com.physmo.romexplorer.gui.Gui;
 import com.physmo.romexplorer.tilers.Tiler;
 import com.physmo.romexplorer.tilers.TilerRepo;
@@ -10,6 +11,7 @@ public class Application {
     DataFile dataFile = null;
     TilerRepo tilerRepo = new TilerRepo();
     String tilerName;
+    ColorMapRepo colorMapRepo;
 
     public Tiler getCurrentTiler() {
         return currentTiler;
@@ -23,7 +25,10 @@ public class Application {
 
     public Application() {
         dataFile = new BasicDataFile();
+        colorMapRepo = new ColorMapRepo();
     }
+
+    public ColorMapRepo getColorMapRepo() { return colorMapRepo; }
 
     public static void main(String[] args) {
         //Schedule a job for the event-dispatching thread:

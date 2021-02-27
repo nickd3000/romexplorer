@@ -7,11 +7,12 @@ Phase 1
 [*] add top button bar and load button
 [*] Make tiler selectable
 [*] Add description to tilers
-[ ] click on summary bar to scroll to position
 [*] remove unused panel
 [*] info bar
+[*] tidy up project and move to github
 
 Phase 2
+[ ] click on summary bar to scroll to position
 [ ] colour mappers
 [ ] auto unzip
 [ ] add waveform strip
