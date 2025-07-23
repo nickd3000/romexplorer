@@ -3,14 +3,20 @@ package com.physmo.romexplorer.rowdrawer;
 import com.physmo.romexplorer.Application;
 import com.physmo.romexplorer.tilers.Tiler;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 
 public class RowDrawerPixel8Bit implements RowDrawer {
 
     BufferedImage bufferedImage = null;
     int scale = 4;
-    int outputPixelWidth = 64; // Raw unscaled pixels
+    int outputPixelWidth = 320/4; // Raw unscaled pixels
     //int numOutputValues = 64;
     Color colBg = new Color(36, 36, 36);
 
@@ -27,7 +33,8 @@ public class RowDrawerPixel8Bit implements RowDrawer {
     public RowDrawerPixel8Bit(Application application) {
         this.application = application;
 
-        createImageBuffer();
+        //createImageBuffer();
+        bufferedImage = createImageBufferCompatible(getOutputRowWidth(), getOutputRowHeight());
 
         //initPalette();
         //this.setPalette(GenerateColorMap.testGenerate());
@@ -36,10 +43,6 @@ public class RowDrawerPixel8Bit implements RowDrawer {
         this.setPalette(application.getColorMapRepo().getList().get(3).map);
     }
 
-    public void createImageBuffer() {
-        bufferedImage = new BufferedImage(getOutputRowWidth(), getOutputRowHeight(),
-                BufferedImage.TYPE_INT_RGB);
-    }
 
     public void initPalette() {
         palette = new Color[0xff + 1];
@@ -96,6 +99,15 @@ public class RowDrawerPixel8Bit implements RowDrawer {
 
     }
 
+    public BufferedImage createImageBufferCompatible(int width, int height) {
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
+        GraphicsConfiguration config = device.getDefaultConfiguration();
+        BufferedImage compatibleImage = config.createCompatibleImage(width, height, Transparency.TRANSLUCENT);
+        System.out.println("image color model: "+compatibleImage.getColorModel());
+        return compatibleImage;
+    }
+
     @Override
     public int getNumRowsForRefactoredFile() {
         int dataLength = refactoredData.length;
@@ -134,14 +146,21 @@ public class RowDrawerPixel8Bit implements RowDrawer {
 
         System.out.println("refactorData Tiler tileWidth:"+tiler.getTileWidth()+" tileHeight:"+tiler.getTileHeight()+" bytesPerTile"+tiler.getBytesPerTile());
 
-        createImageBuffer();
+        //bufferedImage = createImageBufferCompatible(getOutputRowWidth(), getOutputRowHeight());
 
         int[] tileData;
 
         int tileWidth = tiler.getTileWidth();
         int tileHeight = tiler.getTileHeight();
         int bytesPerTile = tiler.getBytesPerTile();
-        refactoredData = new int[(data.length/bytesPerTile)*tileWidth*tileHeight];
+
+        int dataSize = (data.length)*tileWidth*tileHeight;
+
+        if (bytesPerTile>0) dataSize/=bytesPerTile;
+        else dataSize/=2;
+
+            refactoredData = new int[dataSize];
+
 
         int scanningHead = 0;
         boolean keepGoing = true;
@@ -199,7 +218,7 @@ public class RowDrawerPixel8Bit implements RowDrawer {
 
         int scaledRow = row * outputPixelWidth;
 
-        Graphics g = bufferedImage.getGraphics();
+        Graphics2D g = (Graphics2D) bufferedImage.getGraphics();
 
         g.setColor(colBg);
         g.clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
@@ -215,7 +234,7 @@ public class RowDrawerPixel8Bit implements RowDrawer {
             g.fillRect(count * scale, 0, scale, scale);
             count++;
         }
-
+g.dispose();
         return bufferedImage;
     }
 

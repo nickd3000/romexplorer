@@ -1,5 +1,8 @@
-tempChart.png
 *.class
+
+.DS_Store
+
+tempChart.png
 *.gz
 
 # Mobile Tools for Java (J2ME)

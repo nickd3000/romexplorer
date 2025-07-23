@@ -1,9 +1,17 @@
 package com.physmo.romexplorer.rowdrawer;
 
 import com.physmo.romexplorer.Application;
-import com.physmo.romexplorer.tilers.Tiler;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 
 public class RowDrawerText8Bit implements RowDrawer {
@@ -24,8 +32,17 @@ public class RowDrawerText8Bit implements RowDrawer {
 
     public RowDrawerText8Bit(Application application) {
         this.application = application;
-        bufferedImage = new BufferedImage(getOutputRowWidth(), getOutputRowHeight(),
-                BufferedImage.TYPE_INT_RGB);
+        //bufferedImage = new BufferedImage(getOutputRowWidth(), getOutputRowHeight(),
+        //        BufferedImage.TYPE_INT_RGB);
+
+        bufferedImage = createImageBufferCompatible(getOutputRowWidth(), getOutputRowHeight());
+    }
+
+        public  BufferedImage createImageBufferCompatible(int width, int height) {
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
+        GraphicsConfiguration config = device.getDefaultConfiguration();
+        return config.createCompatibleImage(width, height, Transparency.TRANSLUCENT);
     }
 
     @Override
@@ -93,6 +110,7 @@ public class RowDrawerText8Bit implements RowDrawer {
             g.drawString("" + calculateChar(value), i * charSize + 2, charSize - 2);
         }
 
+        g.dispose();
         return bufferedImage;
     }
 

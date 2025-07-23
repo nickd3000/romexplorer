@@ -5,8 +5,17 @@ import com.physmo.romexplorer.rowdrawer.RowDrawerPixel8Bit;
 import com.physmo.romexplorer.rowdrawer.RowDrawerText8Bit;
 import com.physmo.romexplorer.tilers.Tiler;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -38,6 +47,8 @@ public class Gui {
         textPanelScrollPane.repaint();
         pixelPanelScrollPane.repaint();
         summaryStripPanel.repaint();
+
+        System.out.println("refresh all called");
     }
 
     public void refactorImageData() {

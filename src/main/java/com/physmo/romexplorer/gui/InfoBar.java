@@ -31,7 +31,7 @@ public class InfoBar extends JPanel {
         this.add(labelFileSize);
         labelFileSize.setText("0");
 
-        installTickTimer(10);
+        installTickTimer(60);
     }
 
     private void tick() {
